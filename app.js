@@ -36,8 +36,7 @@ app.configure(function() {
 
 app.get("/", function(req, res) {
   res.render("index", {
-    title: "Fietsen Antwerpen",
-    script: db.stations.toString()
+    title: "Fietsen Antwerpen"
   });
 });
 
