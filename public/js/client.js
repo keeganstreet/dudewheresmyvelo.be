@@ -46,14 +46,14 @@ var velo = (function(module) {
         var i, len, station, marker, icon;
         for (i = 0, len = data.stations.length; i < len; i += 1) {
           station = data.stations[i];
-          if (station.bikes > 0 && station.lockers > 0) {
-            icon = iconGreen;
+          if (!station.inOrder) {
+            icon = iconRed;
           } else if (!station.bikes) {
             icon = iconGray;
           } else if (!station.lockers) {
             icon = iconPurple;
           } else {
-            icon = iconRed;
+            icon = iconGreen;
           }
           marker = new google.maps.Marker({
             position: new google.maps.LatLng(station.lat, station.lng),
