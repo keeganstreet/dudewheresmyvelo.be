@@ -63,10 +63,15 @@ var velo = (function(module) {
             stationName: station.name,
             bikes: station.bikes,
             lockers: station.lockers,
-            lastUpdate: station.lastUpdate
+            lastUpdate: station.lastUpdate,
+            inOrder: station.inOrder
           });
           google.maps.event.addListener(marker, "click", function() {
-            infoWindow.setContent("<h2>" + this.stationName + "</h2>Fietsen: " + this.bikes + "<br/>Lockers: " + this.lockers + "<div class='update'>Update: " + this.lastUpdate + "</div>" );
+            var title = this.stationName;
+            if (!this.inOrder) {
+              title += " (buiten dienst)";
+            }
+            infoWindow.setContent("<h2>" + title + "</h2>Fietsen: " + this.bikes + "<br/>Lockers: " + this.lockers + "<div class='update'>Update: " + this.lastUpdate + "</div>" );
             infoWindow.open(map, this);
           });
         }
