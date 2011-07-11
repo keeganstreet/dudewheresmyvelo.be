@@ -19,12 +19,12 @@ app.configure(function() {
 });
 
 app.configure("development", function() {
-  db = new Database("/Users/keegan/Projects/velo/public/js/velo.js");
+  db = new Database("./public/js/velo.js");
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true })); 
 });
 
 app.configure("production", function() {
-  db = new Database("/Users/keegan/Projects/velo/public/js/velo.js");
+  db = new Database("./public/js/velo.js");
   app.use(express.errorHandler());
 });
 
