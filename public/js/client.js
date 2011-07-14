@@ -6,11 +6,11 @@ var velo = (function(module) {
     antwerp = new google.maps.LatLng(51.211078, 4.414272),
     browserSupportFlag = false, map, handleNoGeolocation, markerClick,
     infoWindow = new google.maps.InfoWindow(),
-    iconPerson = "/images/person.png",
-    iconRed = "/images/cycling-red.png",
-    iconGray = "/images/cycling-gray.png",
-    iconPurple = "/images/cycling-purple.png",
-    iconGreen = "/images/cycling-green.png";
+    iconPerson = '/images/person.png',
+    iconRed = '/images/cycling-red.png',
+    iconGray = '/images/cycling-gray.png',
+    iconPurple = '/images/cycling-purple.png',
+    iconGreen = '/images/cycling-green.png';
 
   $(document).ready(function() {
 
@@ -18,7 +18,7 @@ var velo = (function(module) {
       zoom: 15,
       mapTypeId: google.maps.MapTypeId.ROADMAP
     };
-    map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+    map = new google.maps.Map(document.getElementById('map_canvas'), myOptions);
 
     // Try W3C Geolocation method
     if (navigator.geolocation) {
@@ -41,7 +41,7 @@ var velo = (function(module) {
     }
 
     // Load stations
-    $.getJSON("/js/velo.js", function(data) {
+    $.getJSON('/js/velo.js', function(data) {
       if (data && data.stations) {
         var i, len, station, marker, icon;
         for (i = 0, len = data.stations.length; i < len; i += 1) {
@@ -58,7 +58,7 @@ var velo = (function(module) {
           marker = new google.maps.Marker({
             position: new google.maps.LatLng(station.lat, station.lng),
             map: map,
-            title: station.name + " (" + station.bikes + "/" + (station.bikes + station.lockers).toString() + ")",
+            title: station.name + ' (' + station.bikes + '/' + (station.bikes + station.lockers).toString() + ')',
             icon: icon,
             stationName: station.name,
             bikes: station.bikes,
@@ -66,12 +66,12 @@ var velo = (function(module) {
             lastUpdate: station.lastUpdate,
             inOrder: station.inOrder
           });
-          google.maps.event.addListener(marker, "click", function() {
+          google.maps.event.addListener(marker, 'click', function() {
             var title = this.stationName;
             if (!this.inOrder) {
-              title += " (buiten dienst)";
+              title += ' (buiten dienst)';
             }
-            infoWindow.setContent("<h2>" + title + "</h2>Fietsen: " + this.bikes + "<br/>Lockers: " + this.lockers + "<div class='update'>Update: " + this.lastUpdate + "</div>" );
+            infoWindow.setContent('<h2>' + title + '</h2>Fietsen: ' + this.bikes + '<br/>Lockers: ' + this.lockers + '<div class="update">Update: ' + this.lastUpdate + '</div>' );
             infoWindow.open(map, this);
           });
         }

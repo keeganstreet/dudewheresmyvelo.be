@@ -1,30 +1,30 @@
 /*globals require, module, __dirname */
 
 // Module dependencies.
-var express = require("express"),
-  http = require("http"),
-  Database = require("./lib/db");
+var express = require('express'),
+  http = require('http'),
+  Database = require('./lib/db');
 
 var app = module.exports = express.createServer(), db, loadAllStations;
 
 // Configuration
 
 app.configure(function() {
-  app.set("views", __dirname + "/views");
-  app.set("view engine", "jade");
+  app.set('views', __dirname + '/views');
+  app.set('view engine', 'jade');
   app.use(express.bodyParser());
   app.use(express.methodOverride());
   app.use(app.router);
-  app.use(express.static(__dirname + "/public"));
+  app.use(express.static(__dirname + '/public'));
 });
 
-app.configure("development", function() {
-  db = new Database("./public/js/velo.js");
+app.configure('development', function() {
+  db = new Database('./public/js/velo.js');
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true })); 
 });
 
-app.configure("production", function() {
-  db = new Database("./public/js/velo.js");
+app.configure('production', function() {
+  db = new Database('./public/js/velo.js');
   app.use(express.errorHandler());
 });
 
@@ -34,14 +34,14 @@ app.configure(function() {
 
 // Routes
 
-app.get("/", function(req, res) {
-  res.render("index", {
-    title: "Fietsen Antwerpen"
+app.get('/', function(req, res) {
+  res.render('index', {
+    title: 'Fietsen Antwerpen'
   });
 });
 
 app.listen(8080);
-console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
+console.log('Express server listening on port %d in %s mode', app.address().port, app.settings.env);
 
 /**
  * Load the Velo station data
@@ -50,7 +50,7 @@ console.log("Express server listening on port %d in %s mode", app.address().port
  * Repeat every x minutes
  */
 loadAllStations = function() {
-  console.log("Loading station data");
+  console.log('Loading station data');
 
   var 
     stationRegexGlobal = /icon.image = ["']([^"']+)["'];\s+icon.iconSize = new GSize\(16, 16\);\s+icon.iconAnchor = new GPoint\(8, 8\);\s+icon.infoWindowAnchor = new GPoint\(10, 8\);\s+point = new GLatLng\(([0-9.]+),([0-9.]+)\);\s+marker\[[0-9]+\]= new GMarker\(point, icon\);\s+GEvent.addListener\(marker\[[0-9]+\],'click',function\(\) {\s+\$.ajax\({\s+async:true,\s+type: "POST",\s+dataType: "html",\s+data:"(idStation=([0-9]+)[^"]+)",/gm,
@@ -62,17 +62,17 @@ loadAllStations = function() {
 
   // Load the list of stations
   http.get({
-    host: "www.velo-antwerpen.be",
+    host: 'www.velo-antwerpen.be',
     port: 80,
-    path: "/localizaciones/station_map.php"
+    path: '/localizaciones/station_map.php'
   }, function(res) {
     // Build a response document out of the chunked responses
-    var resDoc = "";
-    res.setEncoding("utf8");
-    res.on("data", function(chunk) {
+    var resDoc = '';
+    res.setEncoding('utf8');
+    res.on('data', function(chunk) {
       resDoc += chunk;
     });
-    res.on("end", function() {
+    res.on('end', function() {
       // Find the stations in the response
       var matches, vars, i, station;
       if (stationRegexGlobal.test(resDoc)) {
@@ -85,7 +85,7 @@ loadAllStations = function() {
             lat: vars[2],
             lng: vars[3],
             dataUrl: vars[4],
-            inOrder: (vars[1] !== "http://www.velo-antwerpen.be/pfw_files/tpl/web/map_icon_out16.png")
+            inOrder: (vars[1] !== 'http://www.velo-antwerpen.be/pfw_files/tpl/web/map_icon_out16.png')
           };
           stations.push(station);
         }
@@ -99,19 +99,19 @@ loadAllStations = function() {
 
   loadStationDetails = function(station) {
     var req = http.request({
-      host:    "www.velo-antwerpen.be",
+      host:    'www.velo-antwerpen.be',
       port:    80,
-      path:    "/CallWebService/StationBussinesStatus.php",
-      method:  "POST",
-      headers: { "content-type": "application/x-www-form-urlencoded" }
+      path:    '/CallWebService/StationBussinesStatus.php',
+      method:  'POST',
+      headers: { 'content-type': 'application/x-www-form-urlencoded' }
     }, function(res) {
       var matches;
-      res.setEncoding("utf8");
-      res.on("data", function(chunk) {
+      res.setEncoding('utf8');
+      res.on('data', function(chunk) {
         if (stationNameRegex.test(chunk)) {
           station.name = chunk.match(stationNameRegex)[1];
-          if (station.name === "FOD Financi�n") { // The website we're scraping doesn't use UTF8 encoding
-            station.name = "FOD Financiën";
+          if (station.name === 'FOD Financi�n') { // The website we're scraping doesn't use UTF8 encoding
+            station.name = 'FOD Financiën';
           }
         }
         if (stationValuesRegex.test(chunk)) {
@@ -123,7 +123,7 @@ loadAllStations = function() {
           station.lastUpdate = chunk.match(stationLastUpdateRegex)[1];
         }
         numResponses += 1;
-        console.log("Loaded station " + station.name + " (" + numResponses.toString() + " / " + numStations.toString() + ")");
+        console.log('Loaded station ' + station.name + ' (' + numResponses.toString() + ' / ' + numStations.toString() + ')');
         if (numResponses === numStations) {
           db.lastUpdate = new Date();
           db.stations = stations;
