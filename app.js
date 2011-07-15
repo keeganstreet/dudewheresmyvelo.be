@@ -74,22 +74,29 @@ loadAllStations = function() {
     });
     res.on('end', function() {
       // Find the stations in the response
-      var matches, vars, i, station;
+      var matches, vars, i, station, id;
       if (stationRegexGlobal.test(resDoc)) {
         matches = resDoc.match(stationRegexGlobal);
         numStations = matches.length;
         for (i = 0; i < numStations; i += 1) {
           vars = matches[i].match(stationRegex);
+          id = vars[5];
           station = {
-            id: vars[5],
+            id: id,
             lat: vars[2],
             lng: vars[3],
             dataUrl: vars[4],
             inOrder: (vars[1] !== 'http://www.velo-antwerpen.be/pfw_files/tpl/web/map_icon_out16.png')
           };
-          stations[vars[5]] = station;
-          // Load details for this station
-          loadStationDetails(station);
+          if (id) {
+            stations[id] = station;
+            // Add the cached details to this station
+            if (db.stations[id]) {
+              stations[id] = db.stations[id];
+            }
+            // Load fresh details for this station
+            loadStationDetails(station);
+          }
         }
       }
     });
@@ -122,11 +129,9 @@ loadAllStations = function() {
         }
         numResponses += 1;
         console.log('Loaded station ' + station.id + ' - ' + station.name + ' (' + numResponses.toString() + ' / ' + numStations.toString() + ')');
-        if (numResponses === numStations) {
-          db.lastUpdate = new Date();
-          db.stations = stations;
-          db.save();
-        }
+        db.lastUpdate = new Date();
+        db.stations = stations;
+        db.save();
       });
     });
     req.write(station.dataUrl);
