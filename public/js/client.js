@@ -12,71 +12,68 @@ var velo = (function(module) {
     iconPurple = '/images/cycling-purple.png',
     iconGreen = '/images/cycling-green.png';
 
-  $(document).ready(function() {
+  var myOptions = {
+    zoom: 15,
+    mapTypeId: google.maps.MapTypeId.ROADMAP
+  };
+  map = new google.maps.Map(document.getElementById('map_canvas'), myOptions);
 
-    var myOptions = {
-      zoom: 15,
-      mapTypeId: google.maps.MapTypeId.ROADMAP
-    };
-    map = new google.maps.Map(document.getElementById('map_canvas'), myOptions);
-
-    // Try W3C Geolocation method
-    if (navigator.geolocation) {
-      browserSupportFlag = true;
-      navigator.geolocation.getCurrentPosition(function(position) {
-        initialLocation = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
-        map.setCenter(initialLocation);
-        var marker = new google.maps.Marker({
-          position: initialLocation,
-          map: map,
-          icon: iconPerson
-        });
-      }, function() {
-        handleNoGeolocation(browserSupportFlag);
+  // Try W3C Geolocation method
+  if (navigator.geolocation) {
+    browserSupportFlag = true;
+    navigator.geolocation.getCurrentPosition(function(position) {
+      initialLocation = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
+      map.setCenter(initialLocation);
+      var marker = new google.maps.Marker({
+        position: initialLocation,
+        map: map,
+        icon: iconPerson
       });
-    } else {
-      // Browser doesn't support Geolocation
-      browserSupportFlag = false;
+    }, function() {
       handleNoGeolocation(browserSupportFlag);
-    }
+    });
+  } else {
+    // Browser doesn't support Geolocation
+    browserSupportFlag = false;
+    handleNoGeolocation(browserSupportFlag);
+  }
 
-    // Add markers to map
-    for (i in module.stations) {
-      if (module.stations.hasOwnProperty(i)) {
-        station = module.stations[i];
-        if (!station.name) {
-          break;
-        } else if (!station.inOrder) {
-          icon = iconRed;
-        } else if (!station.bikes) {
-          icon = iconGray;
-        } else if (!station.lockers) {
-          icon = iconPurple;
-        } else {
-          icon = iconGreen;
-        }
-        marker = new google.maps.Marker({
-          position: new google.maps.LatLng(station.lat, station.lng),
-          map: map,
-          title: station.name + ' (' + station.bikes + '/' + (station.bikes + station.lockers).toString() + ')',
-          icon: icon,
-          stationName: station.name,
-          bikes: station.bikes,
-          lockers: station.lockers,
-          lastUpdate: station.lastUpdate,
-          inOrder: station.inOrder
-        });
-        google.maps.event.addListener(marker, 'click', function() {
-          var title = this.stationName;
-          if (!this.inOrder) {
-            title += ' (buiten dienst)';
-          }
-          infoWindow.setContent('<h2>' + title + '</h2>Fietsen: ' + this.bikes + '<br/>Lockers: ' + this.lockers + '<div class="update">Update: ' + this.lastUpdate + '</div>' );
-          infoWindow.open(map, this);
-        });
+  // Add markers to map
+  for (i in module.stations) {
+    if (module.stations.hasOwnProperty(i)) {
+      station = module.stations[i];
+      if (!station.name) {
+        break;
+      } else if (!station.inOrder) {
+        icon = iconRed;
+      } else if (!station.bikes) {
+        icon = iconGray;
+      } else if (!station.lockers) {
+        icon = iconPurple;
+      } else {
+        icon = iconGreen;
       }
+      marker = new google.maps.Marker({
+        position: new google.maps.LatLng(station.lat, station.lng),
+        map: map,
+        title: station.name + ' (' + station.bikes + '/' + (station.bikes + station.lockers).toString() + ')',
+        icon: icon,
+        stationName: station.name,
+        bikes: station.bikes,
+        lockers: station.lockers,
+        lastUpdate: station.lastUpdate,
+        inOrder: station.inOrder
+      });
+      google.maps.event.addListener(marker, 'click', function() {
+        var title = this.stationName;
+        if (!this.inOrder) {
+          title += ' (buiten dienst)';
+        }
+        infoWindow.setContent('<h2>' + title + '</h2>Fietsen: ' + this.bikes + '<br/>Lockers: ' + this.lockers + '<div class="update">Update: ' + this.lastUpdate + '</div>' );
+        infoWindow.open(map, this);
+      });
     }
-  });
+  }
 
   handleNoGeolocation = function(errorFlag) {
     initialLocation = antwerp;
