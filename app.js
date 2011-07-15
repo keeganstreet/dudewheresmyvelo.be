@@ -38,10 +38,19 @@ app.configure(function() {
 
 // Routes
 
+// Add the stylesheet and script as inline code to reduce HTTP requests
 app.get('/', function(req, res) {
-  res.render('index', {
-    title: 'Fietsen Antwerpen',
-    stations: JSON.stringify(db.stations)
+  fs.readFile('./public/js/client.js', 'utf8', function(err, clientScript) {
+    if (err) throw err;
+    fs.readFile('./public/css/style.css', 'utf8', function(err, style) {
+      if (err) throw err;
+      res.render('index', {
+        title: 'Fietsen Antwerpen',
+        stations: JSON.stringify(db.stations),
+        clientScript: clientScript,
+        style: style
+      });
+    });
   });
 });
 
