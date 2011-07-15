@@ -2,9 +2,8 @@
 
 var velo = (function(module) {
 
-  var initialLocation,
+  var map, markerClick, i, station, marker, icon,
     antwerp = new google.maps.LatLng(51.211078, 4.414272),
-    browserSupportFlag = false, map, handleNoGeolocation, markerClick, i, station, marker, icon,
     infoWindow = new google.maps.InfoWindow(),
     iconPerson = '/images/person.png',
     iconRed = '/images/cycling-red.png',
@@ -12,30 +11,31 @@ var velo = (function(module) {
     iconPurple = '/images/cycling-purple.png',
     iconGreen = '/images/cycling-green.png';
 
-  var myOptions = {
+  map = new google.maps.Map(document.getElementById('map_canvas'), {
     zoom: 15,
     mapTypeId: google.maps.MapTypeId.ROADMAP
-  };
-  map = new google.maps.Map(document.getElementById('map_canvas'), myOptions);
+  });
 
-  // Try W3C Geolocation method
+  // Center the map
   if (navigator.geolocation) {
-    browserSupportFlag = true;
     navigator.geolocation.getCurrentPosition(function(position) {
-      initialLocation = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
-      map.setCenter(initialLocation);
-      var marker = new google.maps.Marker({
+      var marker, initialLocation = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
+      // If they are not in Antwerp, just center the map in Antwerp
+      if (initialLocation.lat > 4.449977874755859 || initialLocation.lat < 4.375820159912109 || initialLocation.lng > 51.23322501998357 || initialLocation.lng < 51.1855840469278) {
+        map.setCenter(antwerp);
+      } else {
+        map.setCenter(initialLocation);
+      }
+      marker = new google.maps.Marker({
         position: initialLocation,
         map: map,
         icon: iconPerson
       });
     }, function() {
-      handleNoGeolocation(browserSupportFlag);
+      map.setCenter(antwerp);
     });
   } else {
-    // Browser doesn't support Geolocation
-    browserSupportFlag = false;
-    handleNoGeolocation(browserSupportFlag);
+    map.setCenter(antwerp);
   }
 
   // Add markers to map
@@ -69,16 +69,11 @@ var velo = (function(module) {
         if (!this.inOrder) {
           title += ' (buiten dienst)';
         }
-        infoWindow.setContent('<h2>' + title + '</h2>Fietsen: ' + this.bikes + '<br/>Lockers: ' + this.lockers + '<div class="update">Update: ' + this.lastUpdate + '</div>' );
+        infoWindow.setContent('<h2>' + title + '</h2>Fietsen: ' + this.bikes + '<br/>Lockers: ' + this.lockers + '<div class="update">Update: ' + this.lastUpdate + '</div>');
         infoWindow.open(map, this);
       });
     }
   }
-
-  handleNoGeolocation = function(errorFlag) {
-    initialLocation = antwerp;
-    map.setCenter(initialLocation);
-  };
 
   module.map = map;
   return module;
