@@ -4,7 +4,7 @@ var velo = (function(module) {
 
   var initialLocation,
     antwerp = new google.maps.LatLng(51.211078, 4.414272),
-    browserSupportFlag = false, map, handleNoGeolocation, markerClick,
+    browserSupportFlag = false, map, handleNoGeolocation, markerClick, i, station, marker, icon,
     infoWindow = new google.maps.InfoWindow(),
     iconPerson = '/images/person.png',
     iconRed = '/images/cycling-red.png',
@@ -40,47 +40,42 @@ var velo = (function(module) {
       handleNoGeolocation(browserSupportFlag);
     }
 
-    // Load stations
-    $.getJSON('/js/velo.js', function(data) {
-      if (data && data.stations) {
-        var i, station, marker, icon;
-        for (i in data.stations) {
-          if (data.stations.hasOwnProperty(i)) {
-            station = data.stations[i];
-            if (!station.name) {
-              break;
-            } else if (!station.inOrder) {
-              icon = iconRed;
-            } else if (!station.bikes) {
-              icon = iconGray;
-            } else if (!station.lockers) {
-              icon = iconPurple;
-            } else {
-              icon = iconGreen;
-            }
-            marker = new google.maps.Marker({
-              position: new google.maps.LatLng(station.lat, station.lng),
-              map: map,
-              title: station.name + ' (' + station.bikes + '/' + (station.bikes + station.lockers).toString() + ')',
-              icon: icon,
-              stationName: station.name,
-              bikes: station.bikes,
-              lockers: station.lockers,
-              lastUpdate: station.lastUpdate,
-              inOrder: station.inOrder
-            });
-            google.maps.event.addListener(marker, 'click', function() {
-              var title = this.stationName;
-              if (!this.inOrder) {
-                title += ' (buiten dienst)';
-              }
-              infoWindow.setContent('<h2>' + title + '</h2>Fietsen: ' + this.bikes + '<br/>Lockers: ' + this.lockers + '<div class="update">Update: ' + this.lastUpdate + '</div>' );
-              infoWindow.open(map, this);
-            });
-          }
+    // Add markers to map
+    for (i in module.stations) {
+      if (module.stations.hasOwnProperty(i)) {
+        station = module.stations[i];
+        if (!station.name) {
+          break;
+        } else if (!station.inOrder) {
+          icon = iconRed;
+        } else if (!station.bikes) {
+          icon = iconGray;
+        } else if (!station.lockers) {
+          icon = iconPurple;
+        } else {
+          icon = iconGreen;
         }
+        marker = new google.maps.Marker({
+          position: new google.maps.LatLng(station.lat, station.lng),
+          map: map,
+          title: station.name + ' (' + station.bikes + '/' + (station.bikes + station.lockers).toString() + ')',
+          icon: icon,
+          stationName: station.name,
+          bikes: station.bikes,
+          lockers: station.lockers,
+          lastUpdate: station.lastUpdate,
+          inOrder: station.inOrder
+        });
+        google.maps.event.addListener(marker, 'click', function() {
+          var title = this.stationName;
+          if (!this.inOrder) {
+            title += ' (buiten dienst)';
+          }
+          infoWindow.setContent('<h2>' + title + '</h2>Fietsen: ' + this.bikes + '<br/>Lockers: ' + this.lockers + '<div class="update">Update: ' + this.lastUpdate + '</div>' );
+          infoWindow.open(map, this);
+        });
       }
-    });
+    }
   });
 
   handleNoGeolocation = function(errorFlag) {

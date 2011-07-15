@@ -3,7 +3,8 @@
 // Module dependencies.
 var express = require('express'),
   http = require('http'),
-  Database = require('./lib/db');
+  Database = require('./lib/db'),
+  fs = require("fs");
 
 var app = module.exports = express.createServer(), db, loadAllStations, loadStationDetails;
 
@@ -12,6 +13,9 @@ var app = module.exports = express.createServer(), db, loadAllStations, loadStat
 app.configure(function() {
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
+  app.set('view options', {
+    layout: false
+  });
   app.use(express.bodyParser());
   app.use(express.methodOverride());
   app.use(app.router);
@@ -36,7 +40,8 @@ app.configure(function() {
 
 app.get('/', function(req, res) {
   res.render('index', {
-    title: 'Fietsen Antwerpen'
+    title: 'Fietsen Antwerpen',
+    stations: JSON.stringify(db.stations)
   });
 });
 
@@ -99,7 +104,7 @@ loadAllStations = function() {
     });
   });
 };
-setInterval(loadAllStations, 1000 * 60 * 60);
+setInterval(loadAllStations, 1000 * 60 * 1);
 
 /**
  * Scrape each station detail page to retrieve the bike & locker availabilities
