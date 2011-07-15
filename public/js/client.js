@@ -47,7 +47,9 @@ var velo = (function(module) {
         for (i in data.stations) {
           if (data.stations.hasOwnProperty(i)) {
             station = data.stations[i];
-            if (!station.inOrder) {
+            if (!station.name) {
+              break;
+            } else if (!station.inOrder) {
               icon = iconRed;
             } else if (!station.bikes) {
               icon = iconGray;
