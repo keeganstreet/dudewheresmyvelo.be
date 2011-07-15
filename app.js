@@ -58,7 +58,7 @@ loadAllStations = function() {
     stationNameRegex = /[0-9]+\s+[0-9]{3} - ([^<]+)/,
     stationValuesRegex = /\s[a-z ]+: ([0-9]+)<br>\s+[a-z ]+: ([0-9]+)\s/,
     stationLastUpdateRegex = /:\s+([0-9]{2}:[0-9]{2}:[0-9]{2})/,
-    loadStationDetails, stations = [], numStations = 0, numResponses = 0;
+    loadStationDetails, stations = {}, numStations = 0, numResponses = 0;
 
   // Load the list of stations
   http.get({
@@ -87,12 +87,10 @@ loadAllStations = function() {
             dataUrl: vars[4],
             inOrder: (vars[1] !== 'http://www.velo-antwerpen.be/pfw_files/tpl/web/map_icon_out16.png')
           };
-          stations.push(station);
+          stations[vars[5]] = station;
+          // Load details for this station
+          loadStationDetails(station);
         }
-      }
-      // Now load details for each individual station
-      for (i = 0; i < numStations; i += 1) {
-        loadStationDetails(stations[i]);
       }
     });
   });
@@ -123,7 +121,7 @@ loadAllStations = function() {
           station.lastUpdate = chunk.match(stationLastUpdateRegex)[1];
         }
         numResponses += 1;
-        console.log('Loaded station ' + station.name + ' (' + numResponses.toString() + ' / ' + numStations.toString() + ')');
+        console.log('Loaded station ' + station.id + ' - ' + station.name + ' (' + numResponses.toString() + ' / ' + numStations.toString() + ')');
         if (numResponses === numStations) {
           db.lastUpdate = new Date();
           db.stations = stations;

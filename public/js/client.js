@@ -43,37 +43,39 @@ var velo = (function(module) {
     // Load stations
     $.getJSON('/js/velo.js', function(data) {
       if (data && data.stations) {
-        var i, len, station, marker, icon;
-        for (i = 0, len = data.stations.length; i < len; i += 1) {
-          station = data.stations[i];
-          if (!station.inOrder) {
-            icon = iconRed;
-          } else if (!station.bikes) {
-            icon = iconGray;
-          } else if (!station.lockers) {
-            icon = iconPurple;
-          } else {
-            icon = iconGreen;
-          }
-          marker = new google.maps.Marker({
-            position: new google.maps.LatLng(station.lat, station.lng),
-            map: map,
-            title: station.name + ' (' + station.bikes + '/' + (station.bikes + station.lockers).toString() + ')',
-            icon: icon,
-            stationName: station.name,
-            bikes: station.bikes,
-            lockers: station.lockers,
-            lastUpdate: station.lastUpdate,
-            inOrder: station.inOrder
-          });
-          google.maps.event.addListener(marker, 'click', function() {
-            var title = this.stationName;
-            if (!this.inOrder) {
-              title += ' (buiten dienst)';
+        var i, station, marker, icon;
+        for (i in data.stations) {
+          if (data.stations.hasOwnProperty(i)) {
+            station = data.stations[i];
+            if (!station.inOrder) {
+              icon = iconRed;
+            } else if (!station.bikes) {
+              icon = iconGray;
+            } else if (!station.lockers) {
+              icon = iconPurple;
+            } else {
+              icon = iconGreen;
             }
-            infoWindow.setContent('<h2>' + title + '</h2>Fietsen: ' + this.bikes + '<br/>Lockers: ' + this.lockers + '<div class="update">Update: ' + this.lastUpdate + '</div>' );
-            infoWindow.open(map, this);
-          });
+            marker = new google.maps.Marker({
+              position: new google.maps.LatLng(station.lat, station.lng),
+              map: map,
+              title: station.name + ' (' + station.bikes + '/' + (station.bikes + station.lockers).toString() + ')',
+              icon: icon,
+              stationName: station.name,
+              bikes: station.bikes,
+              lockers: station.lockers,
+              lastUpdate: station.lastUpdate,
+              inOrder: station.inOrder
+            });
+            google.maps.event.addListener(marker, 'click', function() {
+              var title = this.stationName;
+              if (!this.inOrder) {
+                title += ' (buiten dienst)';
+              }
+              infoWindow.setContent('<h2>' + title + '</h2>Fietsen: ' + this.bikes + '<br/>Lockers: ' + this.lockers + '<div class="update">Update: ' + this.lastUpdate + '</div>' );
+              infoWindow.open(map, this);
+            });
+          }
         }
       }
     });
