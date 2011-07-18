@@ -22,7 +22,7 @@ var velo = (function(module) {
       var marker, loc = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
       if (!mapCentered) {
         // If they are not in Antwerp, just center the map in Antwerp
-        if (loc.lat > 4.449977874755859 || loc.lat < 4.375820159912109 || loc.lng > 51.23322501998357 || loc.lng < 51.1855840469278) {
+        if (position.coords.longitude > 4.449977874755859 || position.coords.longitude < 4.375820159912109 || position.coords.latitude > 51.23322501998357 || position.coords.latitude < 51.1855840469278) {
           centerOnAntwerp();
         } else {
           mapCentered = true;
