@@ -3,8 +3,8 @@
   "version": "0.0.2",
   "private": true,
   "dependencies": {
-    "express": "2.4.2",
-    "jade": "0.0.1"
+    "express": "2.4.3",
+    "jade": "0.13.0"
   },
   "engine": "node >= 0.4.1"
 }
