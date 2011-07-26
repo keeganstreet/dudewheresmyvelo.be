@@ -45,7 +45,7 @@ app.get('/', function(req, res) {
     fs.readFile('./public/css/style.css', 'utf8', function(err, style) {
       if (err) throw err;
       res.render('index', {
-        title: 'Dude where’s my velo?',
+        title: 'Dude where’s my Velo?',
         stations: JSON.stringify(db.stations),
         clientScript: clientScript,
         style: style
