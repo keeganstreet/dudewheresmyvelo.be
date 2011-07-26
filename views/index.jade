@@ -13,6 +13,15 @@ html
     script(src="//maps.google.com/maps/api/js?sensor=true")
   body
     #map_canvas
+    #preloader
+      h1= title
+      p.loading Bezig met laden van fietsstations…
+      p
+        | Een open source web app door Keegan Street.
+      p.links
+        a(href="http://twitter.com/kstre") twitter.com/kstre
+        br
+        a(href="http://labs.thesedays.com") labs.thesedays.com
     script
       var velo = (function(module) {
         module.stations = !{stations};

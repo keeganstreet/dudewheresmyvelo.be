@@ -113,7 +113,7 @@ loadAllStations = function() {
     });
   });
 };
-setInterval(loadAllStations, 1000 * 60 * 1);
+setInterval(loadAllStations, 1000 * 60 * 60);
 
 /**
  * Scrape each station detail page to retrieve the bike & locker availabilities

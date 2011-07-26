@@ -16,6 +16,15 @@ var velo = (function(module) {
     mapTypeId: google.maps.MapTypeId.ROADMAP
   });
 
+  // Hide the preloader when they map is ready
+  google.maps.event.addListener(map, 'tilesloaded', function() {
+    var preloader = document.getElementById('preloader');
+    preloader.style.opacity = '0';
+    setTimeout(function() {
+      preloader.style.display = 'none';
+    }, 1100);
+  });
+
   centerOnAntwerp = function() {
     mapCentered = true;
     map.setCenter(antwerp);
@@ -83,7 +92,7 @@ var velo = (function(module) {
           if (!this.inOrder) {
             title += ' (buiten dienst)';
           }
-          infoWindow.setContent('<h2>' + title + '</h2>Fietsen: ' + this.bikes + '<br/>Lockers: ' + this.lockers + '<div class="update">Update: ' + this.lastUpdate + '</div>');
+          infoWindow.setContent('<h2>' + title + '</h2>Beschikbare fietsen: ' + this.bikes + '<br/>Lege plaatsen: ' + this.lockers + '<div class="update">Laatst bijgewerkt: ' + this.lastUpdate + '</div>');
           infoWindow.open(map, this);
         });
       }
