@@ -16,6 +16,11 @@ var velo = (function(module) {
     mapTypeId: google.maps.MapTypeId.ROADMAP
   });
 
+  centerOnAntwerp = function() {
+    mapCentered = true;
+    map.setCenter(antwerp);
+  };
+
   // Center the map
   if (navigator.geolocation) {
     navigator.geolocation.watchPosition(function(position) {
@@ -44,11 +49,6 @@ var velo = (function(module) {
   } else {
     centerOnAntwerp();
   }
-
-  centerOnAntwerp = function() {
-    mapCentered = true;
-    map.setCenter(antwerp);
-  };
 
   // Add markers to map
   (function() {
