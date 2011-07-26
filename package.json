@@ -1,10 +1,10 @@
 {
   "name": "dudewheresmyvelo.be",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "dependencies": {
     "express": "2.4.2",
-    "jade": ">= 0.0.1"
+    "jade": "0.0.1"
   },
   "engine": "node >= 0.4.1"
 }
