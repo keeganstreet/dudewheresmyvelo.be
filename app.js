@@ -150,7 +150,7 @@ loadStationDetails = function() {
 
   // Make the HTTP request and scrape the data for a specific station
   loadAStation = function(station) {
-    var stationNameRegex = /[0-9]+\s+[0-9]{3} - ([^<]+)/,
+    var stationNameRegex = /[0-9]{3} - ([^<]+)/,
       stationValuesRegex = /\s[a-z ]+: ([0-9]+)<br>\s+[a-z ]+: ([0-9]+)\s/,
       stationLastUpdateRegex = /:\s+([0-9]{2}:[0-9]{2}:[0-9]{2})/,
       req;
