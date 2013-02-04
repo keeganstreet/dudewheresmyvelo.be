@@ -1,10 +1,13 @@
 !!! 5
 html
   head
+    meta(charset="utf-8")
     title= title
     meta(name="author", content="Keegan Street")
     meta(name="description", content="De snelste manier om een fiets te vinden in Antwerpen")
     meta(name="viewport", content="initial-scale=1.0, user-scalable=no")
+    //
+      | Source code is available at https://github.com/keeganstreet/dudewheresmyvelo.be. Data was last updated at !{dataLastUpdated}.
     meta(property="og:url", content="http://www.dudewheresmyvelo.be")
     meta(property="og:image", content="http://www.dudewheresmyvelo.be/images/screenshot.jpg")
     link(rel="apple-touch-icon", href="/images/apple-touch-icon-57x57.png")
@@ -30,4 +33,3 @@ html
         return module;
       }(velo || {}));
       !{clientScript}
-

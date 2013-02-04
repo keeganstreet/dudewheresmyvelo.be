@@ -46,6 +46,7 @@ app.get('/', function(req, res) {
 			if (err) throw err;
 			res.render('index', {
 				title: 'Dude where’s my Velo?',
+				dataLastUpdated: db.lastUpdate,
 				stations: JSON.stringify(db.stations),
 				clientScript: clientScript,
 				style: style
