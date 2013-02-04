@@ -117,14 +117,20 @@ setInterval(loadAllStations, 1000 * 60 * 60);
 
 /**
  * Scrape each station detail page to retrieve the bike & locker availabilities
- * Load one station each 4 seconds (85 stations in 5 minutes)
+ * After a station has loaded, rest for 3 seconds and then load another
+ * This is so we don't overload our free server or the site we are scraping
  */
 loadStationDetails = function() {
-  var looper, lastLoadedStationId, loadAStation;
+  var looper, timeLooperLastRun, lastLoadedStationId, loadAStation, timeoutId;
 
   // Load the next station
   looper = function() {
     var i, foundLastLoadedStation = false;
+
+    // Clear the timeout to ensure the looper function doesn't start running multiple times concurrently
+    clearTimeout(timeoutId);
+    timeLooperLastRun = new Date().getTime();
+
     for (i in db.stations) {
       if (db.stations.hasOwnProperty(i)) {
         if (foundLastLoadedStation) {
@@ -136,6 +142,7 @@ loadStationDetails = function() {
         }
       }
     }
+
     // If we didnt already load a station by this point, load the first station
     for (i in db.stations) {
       if (db.stations.hasOwnProperty(i)) {
@@ -144,8 +151,19 @@ loadStationDetails = function() {
       }
     }
   };
+
   db.load(function() {
-    setInterval(looper, 1000 * 4);
+    looper();
+
+    // Start an interval which restarts the looper process if it fails
+    setInterval(function() {
+      var now = new Date().getTime();
+      if (now > timeLooperLastRun + (1000 * 30)) {
+        console.log('Looper was last run more than 30 seconds ago so restart it');
+        clearTimeout(timeoutId);
+        looper();
+      }
+    }, 1000 * 30);
   });
 
   // Make the HTTP request and scrape the data for a specific station
@@ -185,6 +203,10 @@ loadStationDetails = function() {
         console.log('Loaded station ' + station.id + ' - ' + station.name);
         db.lastUpdate = new Date();
         db.save();
+
+        // Start loading the next station after a 3 second rest
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(looper, (1000 * 3));
       });
     });
     req.write(station.dataUrl);
@@ -192,4 +214,3 @@ loadStationDetails = function() {
   };
 };
 loadStationDetails();
-
