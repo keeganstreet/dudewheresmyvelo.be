@@ -1,2 +1,5 @@
 www:
   type: nodejs
+  approot: dudewheresmyvelo
+  config:
+    node_version: v0.4.x
