@@ -2,4 +2,4 @@ www:
   type: nodejs
   approot: dudewheresmyvelo
   config:
-    node_version: v0.4.x
+    node_version: v0.6.x
